@@ -1,36 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using TechJobsPersistent.Models;
 
 namespace TechJobsPersistent.ViewModels
 {
     public class AddJobViewModel
     {
+        [Required(ErrorMessage = "Please enter a valid Job title")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Employer name not found, 'Add New Employer' to continue")]
         public int EmployerId { get; set; }
-        public string[] SelectedSkills { get; set; }
+        public List<SelectListItem> Employers { get; set; }
 
-        public List<SelectListItem> AllEmployers { get; set; }
-        public List<Skill> AllSkills { get; set; }
+        public List<Skill> Skills { get; set; }
 
-
-        public AddJobViewModel() { }
-
-        public AddJobViewModel(List<Employer> employers, List<Skill> skills)
+        public AddJobViewModel(List<Employer> employers, List<Skill> possibleSkills)
         {
-            AllEmployers = new List<SelectListItem>();
+            Employers = new List<SelectListItem>();
 
-            foreach (Employer employer in employers)
+            foreach (var employer in employers)
             {
-                AllEmployers.Add(new SelectListItem
+                Employers.Add(new SelectListItem
                 {
-                    Text = employer.Name,
-                    Value = employer.Id.ToString()
+                    Value = employer.Id.ToString(),
+                    Text = employer.Name
                 });
             }
-
-            AllSkills = skills;
+            Skills = possibleSkills;
         }
+
+        public AddJobViewModel() { }
     }
 }
