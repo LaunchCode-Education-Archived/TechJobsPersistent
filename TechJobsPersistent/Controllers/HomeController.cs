@@ -29,45 +29,57 @@ namespace TechJobsPersistent.Controllers
             return View(jobs);
         }
 
-        [HttpGet("/Add")]
-        public IActionResult AddJob()
+        [HttpGet]
+        public IActionResult Add()
         {
             List<Employer> employers = context.Employers.ToList();
             List<Skill> skills = context.Skills.ToList();
-
-            AddJobSkillViewModel viewModel = new AddJobSkillViewModel(employers, skills);
-
-            return View(viewModel);
+            AddJobViewModel addJobViewModel = new AddJobViewModel(employers, skills);
+            return View(addJobViewModel);
         }
 
-        public IActionResult ProcessAddJobForm(AddJobSkillViewModel viewModel)
+        [HttpPost]
+        public IActionResult Add(AddJobViewModel addJobViewModel, string[] selectedSkills)
         {
             if (ModelState.IsValid)
             {
                 Job newJob = new Job
                 {
-                    Name = viewModel.Name,
-                    Employer = context.Employers.Find(viewModel.EmployerId)
+                    Name = addJobViewModel.Name,
+                    Employer = context.Employers.Find(addJobViewModel.EmployerId),
+                    EmployerId = addJobViewModel.EmployerId,
                 };
 
-                foreach (var selectedskill in viewModel.SelectedSkills)
+                foreach (var item in selectedSkills)
                 {
-                    JobSkill newJobSkill = new JobSkill
-                    {
-                        Job = newJob,
-                        Skill = context.Skills.Find(int.Parse(selectedskill))
-                    };
+                    int skillId = int.Parse(item);
+                    int jobId = newJob.Id;
 
-                    context.JobSkills.Add(newJobSkill);
+                    List<JobSkill> existingTableItems = context.JobSkills
+                         .Where(js => js.JobId == jobId)
+                        .Where(js => js.SkillId == skillId)
+                        .ToList();
+
+                    if (existingTableItems.Count == 0)
+                    {
+                        JobSkill jobSkill = new JobSkill
+                        {
+                            JobId = jobId,
+                            Job = newJob,
+                            SkillId = skillId,
+                            Skill = context.Skills.Find(skillId)
+                        };
+                        context.JobSkills.Add(jobSkill);
+                    }
                 }
 
                 context.Jobs.Add(newJob);
                 context.SaveChanges();
 
-                return Redirect("/Home");
+                return Redirect("Index");
             }
 
-            return View("AddJob", viewModel);
+            return View(addJobViewModel);
         }
 
         public IActionResult Detail(int id)
