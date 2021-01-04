@@ -1,15 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TechJobsPersistent.ViewModels
 {
     public class AddEmployerViewModel
     {
-        [Required(ErrorMessage = "Name is required.")]
+        
+        [Required(ErrorMessage = "The Employer's Name is required.")]
+        
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Name must be between 3 and 50 charecters in length.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Location is required.")]
+        [Required(ErrorMessage = "The Employer's Location is required.")]
+        
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Location must be between 3 and 50 charecters in length.")]
         public string Location { get; set; }
 
         public AddEmployerViewModel(string name, string location)
@@ -18,6 +22,8 @@ namespace TechJobsPersistent.ViewModels
             Location = location;
         }
 
-        public AddEmployerViewModel() { }
+        public AddEmployerViewModel() 
+        { 
+        }
     }
 }

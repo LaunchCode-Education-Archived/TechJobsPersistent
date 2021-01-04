@@ -1,4 +1,6 @@
 ﻿using System;
+
+
 namespace TechJobsPersistent.Models
 {
     public class Skill
@@ -16,5 +18,6 @@ namespace TechJobsPersistent.Models
             Name = name;
             Description = description;
         }
+    
     }
 }
